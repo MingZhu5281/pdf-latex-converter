@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to LaTeX Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 PDF to LaTeX Converter</h1>
+            <p class="subtitle">Transform your PDF documents into LaTeX code using AI</p>
+        </header>
+        
+        <main>
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📎</div>
+                    <h3>Drop your PDF here or click to browse</h3>
+                    <p>Maximum file size: 10MB</p>
+                    <input type="file" id="pdfFile" accept=".pdf" hidden />
+                    <button type="button" class="browse-btn" onclick="document.getElementById('pdfFile').click()">
+                        Choose PDF File
+                    </button>
+                </div>
+                
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <p><strong>Selected file:</strong> <span id="fileName"></span></p>
+                    <p><strong>Size:</strong> <span id="fileSize"></span></p>
+                    <button type="button" class="convert-btn" onclick="convertPDF()">
+                        🚀 Convert to LaTeX
+                    </button>
+                    <button type="button" class="clear-btn" onclick="clearFile()">
+                        ✖ Clear
+                    </button>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Converting your PDF to LaTeX... This may take a few moments.</p>
+                <div class="loading-steps">
+                    <div class="step active" id="step1">📖 Reading PDF pages</div>
+                    <div class="step" id="step2">🤖 Analyzing content with AI</div>
+                    <div class="step" id="step3">✍️ Generating LaTeX code</div>
+                </div>
+            </div>
+            
+            <div class="result-section" id="resultSection" style="display: none;">
+                <h3>🎉 Generated LaTeX Code</h3>
+                <div class="result-actions">
+                    <button onclick="copyToClipboard()" class="action-btn copy-btn">
+                        📋 Copy to Clipboard
+                    </button>
+                    <button onclick="downloadLatex()" class="action-btn download-btn">
+                        💾 Download .tex file
+                    </button>
+                    <button onclick="clearResults()" class="action-btn clear-btn">
+                        🔄 Convert Another
+                    </button>
+                </div>
+                <pre id="latexOutput" class="latex-output"></pre>
+            </div>
+            
+            <div class="error-section" id="errorSection" style="display: none;">
+                <h3>❌ Conversion Error</h3>
+                <p id="errorMessage"></p>
+                <button onclick="clearResults()" class="action-btn">
+                    🔄 Try Again
+                </button>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="footer-content">
+                <p>Built with ❤️ using OpenAI GPT-4o | Free to use</p>
+                <div class="features">
+                    <span class="feature">🔒 Secure</span>
+                    <span class="feature">⚡ Fast</span>
+                    <span class="feature">🤖 AI-Powered</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+flask==3.0.0
+openai==1.99.9
+pymupdf==1.26.3
+python-dotenv==1.0.0
+gunicorn==21.2.0
+werkzeug==3.0.1
