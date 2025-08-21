@@ -2,6 +2,7 @@ import fitz  # PyMuPDF
 import base64
 import io
 from .latex_generator import LaTeXGenerator
+from .rate_limiter import RateLimitConfig
 
 class PDFProcessor:
     """Handles PDF processing and conversion to LaTeX"""
@@ -20,6 +21,13 @@ class PDFProcessor:
             str: Generated LaTeX code
         """
         try:
+            # First, validate page count before processing
+            is_valid, page_count, error_msg = self._validate_page_count(pdf_file)
+            if not is_valid:
+                raise ValueError(error_msg)
+            
+            print(f"Processing PDF with {page_count} pages (limit: {RateLimitConfig.MAX_PAGES_PER_CONVERSION})")
+            
             # Convert PDF pages to images
             images = self._pdf_to_images(pdf_file)
             
@@ -33,6 +41,44 @@ class PDFProcessor:
             
         except Exception as e:
             raise Exception(f"PDF processing failed: {str(e)}")
+    
+    def _validate_page_count(self, pdf_file):
+        """
+        Validate PDF page count against limits
+        
+        Args:
+            pdf_file: Flask file object containing PDF data
+            
+        Returns:
+            tuple: (is_valid, page_count, error_message)
+        """
+        try:
+            # Read PDF data
+            pdf_data = pdf_file.read()
+            pdf_file.seek(0)  # Reset file pointer for later use
+            
+            # Open PDF to get page count
+            doc = fitz.open(stream=pdf_data, filetype="pdf")
+            page_count = len(doc)
+            doc.close()
+            
+            # Check against limit
+            if page_count > RateLimitConfig.MAX_PAGES_PER_CONVERSION:
+                error_msg = (
+                    f"PDF has {page_count} pages, but maximum allowed is "
+                    f"{RateLimitConfig.MAX_PAGES_PER_CONVERSION} pages per conversion. "
+                    "Please split your document into smaller files."
+                )
+                return False, page_count, error_msg
+            
+            if page_count == 0:
+                return False, 0, "PDF appears to be empty or corrupted."
+            
+            return True, page_count, None
+            
+        except Exception as e:
+            error_msg = f"Could not validate PDF: {str(e)}"
+            return False, 0, error_msg
     
     def _pdf_to_images(self, pdf_file):
         """

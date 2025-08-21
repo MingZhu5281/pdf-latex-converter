@@ -136,8 +136,23 @@ async function convertPDF() {
             // Success - show results
             stopLoadingSteps();
             showResults(result.latex_code);
+        } else if (response.status === 429) {
+            // Rate limit exceeded - special handling
+            const retryAfter = response.headers.get('Retry-After');
+            const limitType = result.limit_type || 'general';
+            
+            let message = result.message || 'Rate limit exceeded. Please try again later.';
+            
+            if (limitType === 'convert') {
+                // Daily conversion limit hit
+                message = result.message + '\n\nRate limit resets at midnight UTC.';
+            } else if (retryAfter) {
+                message += `\n\nYou can try again in ${retryAfter} seconds.`;
+            }
+            
+            throw new Error(message);
         } else {
-            // Error from server
+            // Other errors from server
             throw new Error(result.error || 'Unknown error occurred');
         }
         
