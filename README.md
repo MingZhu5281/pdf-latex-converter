@@ -1,5 +1,7 @@
 # PDF to LaTeX Converter
 
+Welcome! :)
+
 A free-to-use web application that converts PDF documents to LaTeX code using OpenAI's GPT-4o multi-modal API.
 
 ## Features
