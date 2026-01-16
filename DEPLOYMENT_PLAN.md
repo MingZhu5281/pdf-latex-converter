@@ -316,7 +316,7 @@ function downloadLatex() {
 sudo dnf update -y
 
 # Install essential packages
-sudo dnf install -y git python3 python3-pip python3-venv nginx firewalld
+sudo dnf install -y git python3 python3-pip python3-devel nginx firewalld
 
 # Start and enable services
 sudo systemctl start firewalld
@@ -349,11 +349,11 @@ sudo chown pdfconverter:pdfconverter /var/www/pdf-latex-converter
 ### 5.1 Clone and Setup Application
 ```bash
 # Switch to application user
-sudo su - pdfconverter
+sudo -u pdfconverter bash
 
 # Clone repository
 cd /var/www/pdf-latex-converter
-git clone <your-repository-url> .
+git clone https://github.com/MingZhu5281/pdf-latex-converter.git .
 
 # Create virtual environment
 python3 -m venv venv
@@ -363,7 +363,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Create environment file
-cp .env.example .env
+cp env.example .env
 # Edit .env with your actual API keys
 nano .env
 ```
@@ -456,7 +456,7 @@ sudo dnf install -y certbot python3-certbot-nginx
 ### 7.2 Obtain SSL Certificate
 ```bash
 # Get certificate (replace with your domain)
-sudo certbot --nginx -d your-domain.com
+sudo certbot --nginx -d latexconverterai.com
 
 # Test auto-renewal
 sudo certbot renew --dry-run
@@ -472,13 +472,16 @@ sudo certbot renew --dry-run
 curl http://localhost:8000
 
 # Test through nginx
-curl http://your-domain.com
+curl http://latexconverterai.com
+curl https://latexconverterai.com
+
 ```
 
 ### 8.2 Monitor Logs
 ```bash
 # Application logs
 sudo journalctl -u pdf-latex-converter -f
+sudo journalctl -u pdf-latex-converter -n 50
 
 # Nginx logs
 sudo tail -f /var/log/nginx/access.log
